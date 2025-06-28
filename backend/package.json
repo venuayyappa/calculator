@@ -1,12 +1,14 @@
 {
-  "name": "calculator",
+  "name": "calculator-static",
   "version": "1.0.0",
   "scripts": {
-    "start": "http-server .",
+    "start": "http-server -p 4000",
     "test": "jest"
   },
-  "devDependencies": {
-    "jest": "^29.0.0",
+  "dependencies": {
     "http-server": "^14.1.1"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0"
   }
 }
