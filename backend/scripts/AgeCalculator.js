@@ -1,5 +1,3 @@
-// If using CommonJS (Node-style)
-const calculateAgeDetails = require('./ageLogic');
 const ageCalcBirthDays = document.querySelector("#birth-day");
 const ageCalcBirthMonths = document.querySelector("#birth-month");
 const ageCalcBirthYear = document.querySelector("#birth-year");
@@ -93,30 +91,45 @@ const selectLastMonth = (event) => {
 ageCalcLastDays.addEventListener("change", selectLastDay);
 ageCalcLastMonths.addEventListener("change", selectLastMonth);
 
-const calculateAgeDetails = require("./ageLogic"); // Use relative path
-
 const calculateAge = () => {
   ageCalcResult.innerHTML = "";
+  const date1 = new Date(
+    `${ageCalcBirthYear.value}-${selectedBMonth}-${selectedBday}`
+  );
+  const date2 = new Date(
+    `${ageCalcLastYear.value}-${selectedLMonth}-${selectedLday}`
+  );
+  const timeDiff = date2.getTime() - date1.getTime();
+  const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+  const diffHours = Math.ceil(diffDays * 24);
+  const diffMinutes = Math.ceil(diffHours * 60);
+  const diffSeconds = Math.ceil(diffMinutes * 60);
 
-  const startDate = `${ageCalcBirthYear.value}-${selectedBMonth}-${selectedBday}`;
-  const endDate = `${ageCalcLastYear.value}-${selectedLMonth}-${selectedLday}`;
-  const result = calculateAgeDetails(startDate, endDate);
+  const yearDiff = date2.getFullYear() - date1.getFullYear();
+  const monthDiff = date2.getMonth() - date1.getMonth();
+  const totalMonthDiff = yearDiff * 12 + monthDiff;
 
-  if (result) {
-    ageCalcResult.innerHTML += `<li class="list-group-item">${result.years} years</li>`;
-    ageCalcResult.innerHTML += `<li class="list-group-item">${result.totalMonths} months</li>`;
-    ageCalcResult.innerHTML += `<li class="list-group-item">${result.days} days</li>`;
-    ageCalcResult.innerHTML += `<li class="list-group-item">${result.hours.toLocaleString("en")} hours</li>`;
-    ageCalcResult.innerHTML += `<li class="list-group-item">${result.minutes.toLocaleString("en")} minutes</li>`;
-    ageCalcResult.innerHTML += `<li class="list-group-item">${result.seconds.toLocaleString("en")} seconds</li>`;
+  if (diffDays > 0) {
+    ageCalcResult.innerHTML += `
+          <li class="list-group-item "><span class="">${yearDiff} years</span></li>`;
+    ageCalcResult.innerHTML += `
+          <li class="list-group-item "><span class=""> ${totalMonthDiff} months</span></li>`;
+    ageCalcResult.innerHTML += `
+          <li class="list-group-item "><span class="">${diffDays} days</span></li>`;
+    // prettier-ignore
+    ageCalcResult.innerHTML += `
+          <li class="list-group-item "><span class="">${diffHours.toLocaleString("en")} hours</span></li>`;
+    // prettier-ignore
+    ageCalcResult.innerHTML += `
+          <li class="list-group-item "><span class="">${diffMinutes.toLocaleString("en")} minutes</span></li>`;
+    // prettier-ignore
+    ageCalcResult.innerHTML += `
+          <li class="list-group-item "><span class="">${diffSeconds.toLocaleString("en")} seconds</span></li>`;
   } else {
     ageCalcResult.innerHTML += `
-      <li class="list-group-item bg-danger-subtle text-warning-emphasis">
-        Date of birth needs to be earlier than current date.
-      </li>`;
+          <li class="list-group-item bg-danger-subtle text-warning-emphasis">Date of birth needs to be earlier than current date..</li>`;
   }
 };
-
 ageCalcButton.addEventListener("click", calculateAge);
 
 const clearButton = () => {

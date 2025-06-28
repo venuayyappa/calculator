@@ -2,13 +2,13 @@
   "name": "calculator",
   "version": "1.0.0",
   "description": "My calculator project",
-  "main": "index.js",
+  "main": "index.html",
   "scripts": {
-    "start": "node index.js",
+    "start": "node index.html",
     "test": "jest"
   },
-  "dependencies": {},
   "devDependencies": {
+    "http-server": "^14.1.1",
     "jest": "^29.7.0"
   }
 }

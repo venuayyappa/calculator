@@ -1,4 +1,5 @@
-function convertLength(value, fromUnit, toUnit) {
+// conversionLogic.js
+export function convertLength(value, fromUnit, toUnit) {
   const conversionRates = {
     m: 1,
     cm: 100,
@@ -13,5 +14,3 @@ function convertLength(value, fromUnit, toUnit) {
 
   return result;
 }
-
-module.exports = convertLength;

@@ -5,73 +5,176 @@ const rpgCheckUpper = document.querySelector("#rpgChechkUpper");
 const rpgCheckNumber = document.querySelector("#rpgChechkNumber");
 const rpgCheckSymbol = document.querySelector("#rpgChechkSymbol");
 const rpgCheckNoRepeat = document.querySelector("#rpgChechkNoRepeat");
+const rpgResultTitle = document.querySelector("#rpg-result-title");
 const rpgResult = document.querySelector("#rpg-result");
 const rpgGenButton = document.querySelector("#rpg-gen-button");
-const rpgCheckboxes = document.querySelectorAll("#check-boxes input[type='checkbox']");
+const rpgCheckboxes = document.querySelectorAll(
+  "#check-boxes input[type='checkbox']"
+);
 
-const numbers = "123456789".split("");
-const letters = "abcdefghijklmnopqrstuvwxyz".split("");
-const symbols = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~".split("");
+input1.addEventListener("input", () => {
+  if (input1.value > 50) {
+    input1.value = 50;
+  }
+  if (input1.value < 4) {
+    input1.value = 4;
+  }
+  input2.value = input1.value;
+  generatePassword();
+});
 
-function getAvailableChars() {
-  let charPool = [];
-  if (rpgCheckNumber.checked) charPool = charPool.concat(numbers);
-  if (rpgCheckLower.checked) charPool = charPool.concat(letters);
-  if (rpgCheckUpper.checked) charPool = charPool.concat(letters.map(l => l.toUpperCase()));
-  if (rpgCheckSymbol.checked) charPool = charPool.concat(symbols);
-  return charPool;
-}
-
-function getRandomChar(pool) {
-  return pool[Math.floor(Math.random() * pool.length)];
-}
+input2.addEventListener("input", () => {
+  if (input2.value > 50) {
+    input2.value = 50;
+  }
+  if (input2.value < 4) {
+    input2.value = 4;
+  }
+  input1.value = input2.value;
+  generatePassword();
+});
 
 function generatePassword() {
-  const length = parseInt(input1.value, 10);
-  const charPool = getAvailableChars();
+  let result = "";
+  // prettier-ignore
+  const numbers = ['1','2','3','4','5','6','7','8','9'];
+  // prettier-ignore
+  const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+  // prettier-ignore
+  const symbols = ['!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~'];
 
-  if (charPool.length === 0) {
+  let notEnoughNumbers = false;
+
+  if (
+    !rpgCheckNumber.checked &&
+    !rpgCheckLower.checked &&
+    !rpgCheckUpper.checked &&
+    !rpgCheckSymbol.checked
+  ) {
     rpgResult.innerHTML = `
-      <li class="list-group-item bg-danger-subtle text-warning-emphasis">
-        Please select at least one character set.
-      </li>`;
-    return;
+          <li class="list-group-item bg-danger-subtle text-warning-emphasis">Please include at least one characters set for the password to be based on.</li>`;
+  } else {
+    if (rpgCheckNoRepeat.checked) {
+      const noRepeat = [];
+
+      let maxLength = 0;
+      if (rpgCheckNumber.checked) {
+        maxLength += numbers.length;
+      }
+      if (rpgCheckLower.checked || rpgCheckUpper.checked) {
+        maxLength += letters.length;
+      }
+      if (rpgCheckSymbol.checked) {
+        maxLength += symbols.length;
+      }
+
+      for (let i = 0; i < input1.value; i++) {
+        if (noRepeat.length >= Math.min(input1.value, maxLength)) {
+          rpgResult.innerHTML = `
+          <li class="list-group-item bg-danger-subtle text-warning-emphasis">Not enough characters to generate such a long non-repeating password.</li>`;
+
+          notEnoughNumbers = true;
+          break;
+        }
+
+        const randomIndex = Math.floor(Math.random() * 3);
+        let randomChar;
+
+        if (randomIndex === 0 && rpgCheckNumber.checked) {
+          const randomIndexNumbers = Math.floor(Math.random() * numbers.length);
+          randomChar = numbers[randomIndexNumbers];
+        } else if (
+          randomIndex === 1 &&
+          (rpgCheckLower.checked || rpgCheckUpper.checked)
+        ) {
+          const randomIndexLet = Math.floor(Math.random() * 2);
+          if (randomIndexLet === 0 && rpgCheckLower.checked) {
+            const randomIndexLetters = Math.floor(
+              Math.random() * letters.length
+            );
+            randomChar = letters[randomIndexLetters];
+          } else if (randomIndexLet === 1 && rpgCheckUpper.checked) {
+            const randomIndexLetters = Math.floor(
+              Math.random() * letters.length
+            );
+            randomChar = letters[randomIndexLetters].toUpperCase();
+          } else {
+            i -= 1;
+          }
+        } else if (randomIndex === 2 && rpgCheckSymbol.checked) {
+          const randomIndexSymbols = Math.floor(Math.random() * symbols.length);
+          randomChar = symbols[randomIndexSymbols];
+        } else {
+          i -= 1;
+        }
+
+        if (randomChar === undefined) {
+          continue;
+        }
+
+        if (noRepeat.includes(randomChar)) {
+          i -= 1;
+          continue;
+        } else {
+          noRepeat.push(randomChar);
+        }
+
+        result += randomChar;
+      }
+      if (notEnoughNumbers == false) {
+        rpgResult.innerHTML = `
+          <li class="list-group-item "><span class="">${result}</span></li>`;
+      }
+    } else {
+      for (let i = 0; i < input1.value; i++) {
+        const randomIndex = Math.floor(Math.random() * 3);
+        let randomChar;
+
+        if (randomIndex === 0 && rpgCheckNumber.checked) {
+          const randomIndexNumbers = Math.floor(Math.random() * numbers.length);
+          randomChar = numbers[randomIndexNumbers];
+        } else if (
+          randomIndex === 1 &&
+          (rpgCheckLower.checked || rpgCheckUpper.checked)
+        ) {
+          const randomIndexLet = Math.floor(Math.random() * 2);
+          if (randomIndexLet === 0 && rpgCheckLower.checked) {
+            const randomIndexLetters = Math.floor(
+              Math.random() * letters.length
+            );
+            randomChar = letters[randomIndexLetters];
+          } else if (randomIndexLet === 1 && rpgCheckUpper.checked) {
+            const randomIndexLetters = Math.floor(
+              Math.random() * letters.length
+            );
+            randomChar = letters[randomIndexLetters].toUpperCase();
+          } else {
+            i -= 1;
+          }
+        } else if (randomIndex === 2 && rpgCheckSymbol.checked) {
+          const randomIndexSymbols = Math.floor(Math.random() * symbols.length);
+          randomChar = symbols[randomIndexSymbols];
+        } else {
+          i -= 1;
+        }
+
+        if (randomChar === undefined) {
+          continue;
+        }
+
+        result += randomChar;
+      }
+      rpgResult.innerHTML = `
+          <li class="list-group-item "><span class="">${result}</span></li>`;
+    }
   }
-
-  if (rpgCheckNoRepeat.checked && length > charPool.length) {
-    rpgResult.innerHTML = `
-      <li class="list-group-item bg-danger-subtle text-warning-emphasis">
-        Not enough unique characters to create a non-repeating password of length ${length}.
-      </li>`;
-    return;
-  }
-
-  const result = [];
-  const used = new Set();
-
-  while (result.length < length) {
-    const char = getRandomChar(charPool);
-    if (rpgCheckNoRepeat.checked && used.has(char)) continue;
-    result.push(char);
-    used.add(char);
-  }
-
-  rpgResult.innerHTML = `
-    <li class="list-group-item">
-      <span>${result.join("")}</span>
-    </li>`;
 }
 
-// Sync inputs
-function syncInputs(e) {
-  const val = Math.min(50, Math.max(4, e.target.value));
-  input1.value = val;
-  input2.value = val;
-  generatePassword();
-}
-
-input1.addEventListener("input", syncInputs);
-input2.addEventListener("input", syncInputs);
 rpgGenButton.addEventListener("click", generatePassword);
-rpgCheckboxes.forEach(cb => cb.addEventListener("click", generatePassword));
-window.addEventListener("load", generatePassword);
+rpgCheckboxes.forEach((checkbox) => {
+  checkbox.addEventListener("click", generatePassword);
+});
+
+window.addEventListener("load", () => {
+  generatePassword();
+});
