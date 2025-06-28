@@ -1,4 +1,4 @@
-const convertLength = require("../scripts/conversionLogic");
+const convertLength = require("../scripts/CconversionLogic");
 
 test("converts meters to centimeters", () => {
   expect(convertLength(1, "m", "cm")).toBe(100);
